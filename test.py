@@ -1,13 +1,13 @@
-import djangone
-from django.conf.urls import patterns
+from djangone import *
 from django.shortcuts import render
 
+@url(r'^momo/?$')
+def momo(request):
+    return render(request, 'index.html', {'name': 'Momo'})
+
+@url(r'^(\w+)?$')
 def index(request, name):
     return render(request, 'index.html', {'name': name})
 
-djangone.urlpatterns += patterns('', (r'^(?P<name>\w+)?$', index))
-
 if __name__=='__main__':
-    # run manage.py
-    from django.core import management
-    management.execute_from_command_line()
+    run()

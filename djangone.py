@@ -1,8 +1,11 @@
 import os
 import sys
-from django.conf.urls import patterns
 
-__all__ = ['settings', 'urlpatterns']
+import django
+from django.conf.urls import patterns
+from django.core import management
+
+__all__ = ['settings', 'url', 'manage', 'run']
 
 def fake_module(name):
     # creates a fake module in memory
@@ -10,6 +13,23 @@ def fake_module(name):
     sys.modules[name] = module
     return module
 
+def url(regex, params=None):
+    # a decorator to bind a view to a url
+    def _route(view):
+        urlconf.urlpatterns += patterns('', (regex, view, params))
+        def wrapper(*args, **kw):
+            return view(*args, **kw)
+        return wrapper
+    return _route
+
+def manage():
+    management.execute_from_command_line()
+
+def run():
+    django.setup()
+    management.call_command('runserver')
+
+# Set up urlconf
 urlconf = fake_module('urls')
 urlpatterns = patterns('')
 urlconf.urlpatterns = urlpatterns
